@@ -1,5 +1,5 @@
 use std::env;
-use std::process::{ExitCode};
+use std::process::ExitCode;
 use fs_err::File;
 use std::io::{BufRead, BufReader};
 
