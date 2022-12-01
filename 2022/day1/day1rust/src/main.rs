@@ -73,8 +73,7 @@ fn process_file(filename: &String) -> ExitCode {
         calories.push(running_sum);
     }
     calories.sort_by(|a, b| b.cmp(a));
-    let top3slice = &calories[..3];
-    let top3sum: i32 = top3slice.iter().sum();
+    let top3sum: i32 = calories[..3].iter().sum();
     println!("Most calories: {}", calories[0]); // problem 1
     println!("Top 3 total: {}", top3sum); // problem 2
     ExitCode::SUCCESS
