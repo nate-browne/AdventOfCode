@@ -4,19 +4,6 @@ from sys import argv, stderr, exit
 
 from classes import PlayerMove, OpponentMove
 
-def determine_player_move(desired_result: str, om: OpponentMove) -> str:
-    losing_combo = {
-        'rock': 'scissors',
-        'scissors': 'paper',
-        'paper': 'rock',
-    }
-    if desired_result == 'lose':
-        return losing_combo[om.translated_move]
-    elif desired_result == 'draw': # simple case, we need to mirror the opponent
-        return om.translated_move
-    else:
-        pass
-
 def process_line(line: str) -> int:
     moves = line.split()
     om = OpponentMove(moves[0])
