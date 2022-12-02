@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 class OpponentMove(object):
     move_mapping = {
         'A': 'rock',
@@ -48,7 +47,7 @@ class PlayerMove(object):
         self.translated_move = self._determine_player_move(PlayerMove.result_mapping[move_letter], om)
         self.move_score = PlayerMove.score_mapping[self.translated_move]
 
-    def score_round(self, om: OpponentMove):
+    def score_round(self, om: OpponentMove) -> int:
         player_wins = {'paperrock', 'rockscissors', 'scissorspaper'}
         player_draws = {'rockrock', 'paperpaper', 'scissorsscissors'}
 
