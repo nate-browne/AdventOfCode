@@ -2,6 +2,7 @@ use std::env;
 use std::process::ExitCode;
 use fs_err::File;
 use csv;
+use anyhow::{Result, Context};
 use std::collections::HashSet;
 use itertools::Itertools;
 use std::io::BufReader;
@@ -23,22 +24,14 @@ impl Config {
     }
 }
 
-fn parse_input_file(filename: &String) -> Result<Vec<(i32, i32, i32, i32)>, ()> {
+fn parse_input_file(filename: &String) -> Result<Vec<(i32, i32, i32, i32)>> {
     let mut output: Vec<(i32, i32, i32, i32)> = Vec::new();
 
     // Open the file and create the csv reader
-    let infile = match File::open(filename) {
-        Ok(f) => f,
-        Err(e) => {
-            eprintln!("Error opening filename `{filename}`: {e}");
-            return Err(());
-        }
-    };
-
     // Have to use `ReaderBuilder` since the regular `Reader` assumes line 1 is a header
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
-        .from_reader(BufReader::new(infile));
+        .from_reader(BufReader::new(File::open(filename)?));
 
     // For every row, take each string, split it on the '-' character, and parse each
     // half of that as an i32. Then, push those i32s into a vector
@@ -46,28 +39,18 @@ fn parse_input_file(filename: &String) -> Result<Vec<(i32, i32, i32, i32)>, ()> 
         let mut extension = Vec::new();
         for item in row.unwrap().into_iter() { // I know `.unwrap()` is unsafe; I don't care
             for tm in item.split("-").into_iter() {
-                let tmp_i32 = match tm.parse::<i32>() {
-                    Ok(v) => v,
-                    Err(e) => {
-                        eprintln!("Error parsing {item} as i32: {e}");
-                        return Err(());
-                    }
-                };
-                extension.push(tmp_i32);
+                extension.push(tm.parse::<i32>()?);
             }
         }
 
         // Take that vector of size 4 and turn it into a 4-tuple
-        let tmp_tpl: (i32, i32, i32, i32) = match extension.into_iter().collect_tuple() {
-            Some(t) => t,
-            None => {
-                eprintln!("Error occured parsing vec to tuple");
-                return Err(());
-            }
-        };
-
-        // Push that 4-tuple into our return vector
-        output.push(tmp_tpl);
+        // and push that 4-tuple into our return vector
+        output.push(
+            extension
+                .into_iter()
+                .collect_tuple()
+                .context("Error occurred parsing vec to tuple")?,
+        );
     }
 
     Ok(output)
