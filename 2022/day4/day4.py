@@ -21,8 +21,7 @@ def parse_input_file(filename: str) -> List[Tuple[int, int, int, int]]:
 def main(filename: str):
     values = parse_input_file(filename)
 
-    part1total = 0
-    part2total = 0
+    part1total, part2total = 0, 0
     # Idea here: we make sets of the ranges and look for
     # the overlap. This means our ranges have to be inclusive
     # s = start, e = end
