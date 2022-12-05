@@ -32,13 +32,10 @@ fn grab_input(prompt: &str) -> String {
 
     let mut option = String::new();
 
-    match stdin().read_line(&mut option) {
-        Ok(_) => (),
-        Err(e) => {
-            eprintln!("Error occurred while reading string: {e}");
-            exit(1);
-        }
-    };
+    if let Err(e) = stdin().read_line(&mut option) {
+        eprintln!("Error occurred while reading string: {e}");
+        exit(1);
+    }
     String::from(option.trim())
 }
 
@@ -174,13 +171,10 @@ fn main() -> ExitCode {
         }
     };
 
-    match run_simulation(&mut stacks_map, &conf.instr_filename, part1behavior) {
-        Ok(_) => (),
-        Err(e) => {
-            eprintln!("Error occurred running instructions: {e}");
-            return ExitCode::FAILURE;
-        }
-    };
+    if let Err(e) = run_simulation(&mut stacks_map, &conf.instr_filename, part1behavior) {
+        eprintln!("Error occurred running instructions: {e}");
+        return ExitCode::FAILURE;
+    }
 
     ExitCode::SUCCESS
 }
