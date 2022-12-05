@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from typing import Tuple, List
+from typing import Tuple
 from sys import argv, exit, stderr
 from collections import defaultdict
 
@@ -13,7 +13,7 @@ def parse_instruction_line(instruction: str) -> Tuple[int, str, str]:
     return int(number_of_crates), starting_stack, destination_stack
 
 
-def parse_state_line(state_input_line: str) -> Tuple[str, List[str]]:
+def parse_state_line(state_input_line: str) -> Tuple[str, str]:
     crate_number = state_input_line.split(":")[0]
     crates = state_input_line.split(":")[1]
     return crate_number, crates
