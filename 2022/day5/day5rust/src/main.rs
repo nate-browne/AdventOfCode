@@ -1,7 +1,7 @@
 use std::{env, io::{stdout, Write, stdin, BufRead, BufReader}};
 use std::process::{ExitCode, exit};
 use fs_err::File;
-use std::collections::BTreeMap;
+use std::collections::BTreeMap; // Using this because we need the keys sorted
 use anyhow::{Result, Context};
 
 // Number of expected command line arguments
