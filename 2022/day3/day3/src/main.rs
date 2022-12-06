@@ -1,10 +1,12 @@
-use std::env;
-use std::process::ExitCode;
+use std::{
+    env,
+    io::{BufRead, BufReader},
+    process::ExitCode,
+    collections::{HashMap, HashSet},
+    convert::TryInto,
+};
 use fs_err::File;
-use std::collections::{HashMap, HashSet};
 use intersection::hash_set;
-use std::io::{BufRead, BufReader};
-use std::convert::TryInto;
 
 // Number of expected command line arguments
 const EXPECTED_ARG_NUM: usize = 2;
