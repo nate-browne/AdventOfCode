@@ -23,9 +23,9 @@ impl Config {
     }
 }
 
-fn part1(input_file: &String) -> Result<usize> {
+fn solver(input_file: &String, pointer2start: usize) -> Result<usize> {
     let mut pointer1 = 0;
-    let mut pointer2 = 4;
+    let mut pointer2 = pointer2start;
     let infile = File::open(input_file)
         .context("Error occurred opening input file")?;
     let reader = BufReader::new(infile);
@@ -60,7 +60,7 @@ fn main() -> ExitCode {
         }
     };
 
-    let part1_answer = match part1(&conf.input_file) {
+    let part1_answer = match solver(&conf.input_file, 4) {
         Ok(n) => n,
         Err(e) => {
             eprintln!("Error occurred solving part 1: {e}");
@@ -69,6 +69,16 @@ fn main() -> ExitCode {
     };
 
     println!("Part 1 answer: {part1_answer}");
+
+    let part2_answer = match solver(&conf.input_file, 14) {
+        Ok(n) => n,
+        Err(e) => {
+            eprintln!("Error occurred solving part 2: {e}");
+            return ExitCode::FAILURE
+        }
+    };
+
+    println!("Part 2 answer: {part2_answer}");
 
     ExitCode::SUCCESS
 }
