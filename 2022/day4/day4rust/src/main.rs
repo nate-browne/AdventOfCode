@@ -1,11 +1,13 @@
-use std::env;
-use std::process::ExitCode;
+use std::{
+    env,
+    process::ExitCode,
+    collections::HashSet,
+    io::BufReader,
+};
 use fs_err::File;
 use csv;
 use anyhow::{Result, Context};
-use std::collections::HashSet;
 use itertools::Itertools;
-use std::io::BufReader;
 
 // Number of expected command line arguments
 const EXPECTED_ARG_NUM: usize = 2;

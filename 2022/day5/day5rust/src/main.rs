@@ -1,7 +1,10 @@
-use std::{env, io::{stdout, Write, stdin, BufRead, BufReader}};
-use std::process::{ExitCode, exit};
+use std::{
+    env,
+    io::{stdout, Write, stdin, BufRead, BufReader},
+    process::{ExitCode, exit},
+    collections::BTreeMap, // using instead of HashMap cause we need sorted keys
+};
 use fs_err::File;
-use std::collections::BTreeMap; // Using this because we need the keys sorted
 use anyhow::{Result, Context};
 
 // Number of expected command line arguments

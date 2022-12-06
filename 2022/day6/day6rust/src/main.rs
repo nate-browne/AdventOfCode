@@ -1,7 +1,10 @@
-use std::{env, io::{BufRead, BufReader}};
-use std::process::ExitCode;
+use std::{
+    env,
+    io::{BufRead, BufReader},
+    process::ExitCode,
+    collections::HashSet,
+};
 use fs_err::File;
-use std::collections::HashSet;
 use anyhow::{Result, Context};
 
 // Number of expected command line arguments
