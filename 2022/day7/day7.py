@@ -34,8 +34,8 @@ class Dir:
                 result.append(file)
         return result
 
-    def files_sizes(self) -> int:
-        '''Unlike `size` below, this calculates the size a directory's files only'''
+    def total_space_used(self) -> int:
+        '''Unlike `size` below, this calculates the total space used (so it double counts)'''
         return sum(file.size for file in self.files_in_dir() if isinstance(file, File))
 
 
@@ -108,12 +108,25 @@ def main(input_file: str):
         exit(1)
 
     total = 0
+    total_disk_space = 70_000_000
+
     for file in root_dir.files_in_dir():
         if isinstance(file, Dir):
-            size = file.files_sizes()
-            if size <= 100_000:
-                total += size
+            sz = file.total_space_used()
+            if sz <= 100_000:
+                total += sz
     print(f'Part 1 total: {total}')
+
+    free_space = total_disk_space - root_dir.total_space_used()
+
+    # create a list of all folders we could delete to create enough update space
+    can_be_freed = [
+        file for file in root_dir.files_in_dir()
+        if isinstance(file, Dir) and file.total_space_used() + free_space >= 30_000_000
+    ]
+
+    # find the size of the smallest folder that fits the criterion
+    print(f'Part 2: {min(file.total_space_used() for file in can_be_freed)}')
 
 
 if __name__ == "__main__":
