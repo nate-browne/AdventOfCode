@@ -106,7 +106,46 @@ fn count_visible_trees(tree_grid: &Vec<Vec<i32>>) -> i32 {
 
 fn evaluate_tree_scores(tree_grid: &Vec<Vec<i32>>) -> i32 {
     let mut highest_score = 0;
+    for x in 0..tree_grid[0].len() {
+        for y in 0..tree_grid.len() {
+            let score = evaluate_tree(tree_grid, x, y);
+            if score > highest_score {
+                highest_score = score;
+            }
+        }
+    }
     highest_score
+}
+
+fn evaluate_tree(tree_grid: &Vec<Vec<i32>>, x: usize, y: usize) -> i32 {
+    let up = calculate_view_distance(tree_grid, x, y, 0, -1);
+    let down= calculate_view_distance(tree_grid, x, y, 0, 1);
+    let left = calculate_view_distance(tree_grid, x, y, -1, 0);
+    let right = calculate_view_distance(tree_grid, x, y, 1, 0);
+    up * down * left * right
+}
+
+fn calculate_view_distance(tree_grid: &Vec<Vec<i32>>, mut x: usize, mut y: usize, x_direction: isize, y_direction: isize) -> i32 {
+    let x_len = tree_grid[0].len();
+    let y_len = tree_grid.len();
+    let current_tree_height = tree_grid[x][y];
+    let mut distance = 0;
+
+    let mut isize_x = (x as isize) + x_direction;
+    let mut isize_y = (y as isize) + y_direction;
+
+    while 0 <= isize_x && isize_x < (x_len as isize) && 0 <= isize_y && isize_y < (y_len as isize) {
+
+        x = isize_x as usize;
+        y = isize_y as usize;
+        distance += 1;
+        if tree_grid[x][y] >= current_tree_height {
+            break;
+        }
+        isize_x = (x as isize) + x_direction;
+        isize_y = (y as isize) + y_direction;
+    }
+    distance
 }
 
 fn main() -> ExitCode {
@@ -132,6 +171,9 @@ fn main() -> ExitCode {
 
     let part1 = count_visible_trees(&tree_grid);
     println!("part 1: {part1}");
+
+    let part2 = evaluate_tree_scores(&tree_grid);
+    println!("part 2: {part2}");
 
     ExitCode::SUCCESS
 }
