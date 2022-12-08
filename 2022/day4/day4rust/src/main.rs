@@ -39,7 +39,7 @@ fn parse_input_file(filename: &String) -> Result<Vec<(i32, i32, i32, i32)>> {
     // half of that as an i32. Then, push those i32s into a vector
     for row in rdr.records() {
         let mut extension = Vec::new();
-        for item in row.unwrap().into_iter() { // I know `.unwrap()` is unsafe; I don't care
+        for item in row?.into_iter() {
             for tm in item.split("-").into_iter() {
                 extension.push(tm.parse::<i32>()?);
             }

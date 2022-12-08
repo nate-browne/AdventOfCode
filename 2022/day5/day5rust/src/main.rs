@@ -14,7 +14,7 @@ const INSTR_FILE_IDX: usize = 2;
 
 struct Config {
     state_filename: String,
-    instr_filename: String, 
+    instr_filename: String,
 }
 
 impl Config {
@@ -65,7 +65,7 @@ fn fill_stacks_map(state_filename: &String) -> Result<BTreeMap<String, Vec<Strin
     );
 
     for line in reader.lines() {
-        let (crate_number, crates) = parse_state_line(line.unwrap());
+        let (crate_number, crates) = parse_state_line(line?);
 
         if !stacks_map.contains_key(&crate_number) {
             stacks_map.insert(crate_number.clone(), Vec::new());
