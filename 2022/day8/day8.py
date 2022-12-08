@@ -84,6 +84,17 @@ def calculate_view_distance(tree_grid: List[List[int]], x: int, y: int, x_direct
     return distance
 
 
+def evaluate_tree_scores(tree_grid: List[List[int]]) -> int:
+    # iterate through the grid
+    highest_score = 0
+    for x in range(len(tree_grid[0])):
+        for y in range(len(tree_grid)):
+            score = evaluate_tree(tree_grid, x, y)
+            if score > highest_score:
+                highest_score = score
+    return highest_score
+
+
 def main(input_file: str):
     with open(input_file, 'r') as infile:
         tree_grid: List[List[int]] = []
@@ -97,14 +108,7 @@ def main(input_file: str):
             tree_grid.append(row)
 
         print(f'part 1: {count_visible_trees(tree_grid)}')
-
-        # iterate through the grid
-        scores = []
-        for x in range(len(tree_grid[0])):
-            for y in range(len(tree_grid)):
-                scores.append(evaluate_tree(tree_grid, x, y))
-        scores.sort(reverse=True)
-        print(f'part 2: {scores[0]}')
+        print(f'part 2: {evaluate_tree_scores(tree_grid)}')
 
 
 if __name__ == "__main__":
