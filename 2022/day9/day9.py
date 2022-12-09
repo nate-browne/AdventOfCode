@@ -99,16 +99,17 @@ def main(input_file: str):
 
     rope_snake: List[Union[Head, Tail]] = []
     rope_snake.append(Head())
-    for _ in range(1, 10):
+    for _ in range(9):
         rope_snake.append(Tail())
 
     for dr, amt in instructions:
         for _ in range(amt):
             for ind, item in enumerate(rope_snake):
-                if ind == 0:
+                if isinstance(item, Head):
                     item.move(Direction.letter_to_direction(dr))
-                else:
+                elif isinstance(item, Tail):
                     item.move(rope_snake[ind - 1])
+
     print(f'Part 2: {len(rope_snake[-1].get_visited())}')
 
 
