@@ -33,7 +33,6 @@ enum Direction {
     DOWN,
     LEFT,
     RIGHT,
-    NULL,
 }
 
 impl Direction {
@@ -48,110 +47,47 @@ impl Direction {
     }
 }
 
-struct Head {
+struct RopeNode {
     x: i32,
     y: i32,
-    direction: Direction,
+    visited: HashSet<(i32, i32)>,
 }
 
-impl Head {
-    fn new() -> Head {
-        Head {
+impl RopeNode {
+    fn new() -> RopeNode {
+        RopeNode {
             x: 0,
             y: 0,
-            direction: Direction::NULL,
+            visited: HashSet::from([(0, 0)]),
         }
     }
 
-    fn reset_position(&mut self) {
-        self.x = 0;
-        self.y = 0;
-        self.direction = Direction::NULL;
-    }
-
     fn move_head(&mut self, dr: Direction) {
-        self.direction = dr.clone();
         match dr {
             Direction::UP => self.y += 1,
             Direction::DOWN => self.y -= 1,
             Direction::LEFT => self.x -= 1,
             Direction::RIGHT => self.x += 1,
-            Direction::NULL => (),
-        }
-    }
-}
-
-struct Tail {
-    visited: HashSet<(i32, i32)>,
-    x: i32,
-    y: i32,
-    max_distance: f64,
-}
-
-impl Tail {
-    fn new() -> Tail {
-        Tail {
-            visited: HashSet::from([(0, 0)]),
-            x: 0,
-            y: 0,
-            max_distance: 2_f64.sqrt(),
-        }
+        } 
     }
 
-    fn _is_same_row(&self, h: &Head) -> bool {
-        self.x != h.x && self.y == h.y
-    }
+    fn move_tail(&mut self, other_x: i32, other_y: i32) {
+        let x_dist = other_x - self.x;
+        let y_dist = other_y - self.y;
 
-    fn _is_same_col(&self, h: &Head) -> bool {
-        self.x == h.x && self.y != h.y
-    }
-
-    fn move_tail(&mut self, h: &Head) {
-        let distance = (((h.x - self.x).pow(2) + (h.y - self.y).pow(2)) as f64).sqrt();
-        if distance > self.max_distance {
-            if !self._is_same_col(h) && !self._is_same_row(h) {
-                // if the head goes up or down, we need to match the column
-                // if it goes left or right, we need to match the row
-                match h.direction {
-                    Direction::UP => {
-                        self.x = h.x;
-                        self.y += 1;
-                    }
-                    Direction::DOWN => {
-                        self.x = h.x;
-                        self.y -= 1;
-                    }
-                    Direction::LEFT => {
-                        self.x -= 1;
-                        self.y = h.y;
-                    }
-                    Direction::RIGHT => {
-                        self.x += 1;
-                        self.y = h.y;
-                    }
-                    Direction::NULL => (),
-                }
-            } else if self._is_same_row(h) {
-                if h.x - self.x > 0 {
-                    self.x += 1;
-                } else {
-                    self.x -= 1;
-                }
-            } else if self._is_same_col(h) {
-                if h.y - self.y > 0 {
-                    self.y += 1;
-                } else {
-                    self.y -= 1;
-                }
+        if x_dist.abs() >= 2 || y_dist.abs() >= 2 {
+            if x_dist > 0 {
+                self.x += 1;
+            } else if x_dist < 0 {
+                self.x -= 1;
             }
-            self._add_to_visited();
-        }
-    }
 
-    fn reset_position(&mut self) {
-        self.x = 0;
-        self.y = 0;
-        self.visited.clear();
+            if y_dist > 0 {
+                self.y += 1;
+            } else if y_dist < 0 {
+                self.y -= 1;
+            }
+        }
         self._add_to_visited();
     }
 
@@ -192,10 +128,8 @@ fn main() -> ExitCode {
         }
     };
 
-    let mut head = Head::new();
-    let mut tail = Tail::new();
-    println!("Initial head coordinates: ({}, {})", head.x, head.y);
-    println!("Initial tail coordinates: ({}, {})", tail.x, tail.y);
+    let mut head = RopeNode::new();
+    let mut tail = RopeNode::new();
     let instructions = match parse_input_file(&conf.input_file) {
         Ok(inst) => inst,
         Err(e) => {
@@ -204,15 +138,36 @@ fn main() -> ExitCode {
         }
     };
 
-    for (dr, amt) in instructions {
-        for _ in 0..amt {
-            head.move_head(Direction::letter_to_direction(&dr));
-            tail.move_tail(&head);
+    for (dr, amt) in &instructions {
+        for _ in 0..*amt {
+            head.move_head(Direction::letter_to_direction(dr));
+            tail.move_tail(head.x, head.y);
         }
     }
-    println!("Final head coordinates: ({}, {})", head.x, head.y);
-    println!("Final tail coordinates: ({}, {})", tail.x, tail.y);
     println!("Part 1: {}", tail.get_visited().len());
+
+    let mut rope_snake = Vec::new();
+    rope_snake.push(RopeNode::new());
+
+    for _ in 0..9 {
+        rope_snake.push(RopeNode::new());
+    }
+
+    for (dr, amt) in instructions {
+        for _ in 0..amt {
+            for ind in 0..rope_snake.len() {
+                if ind == 0 {
+                    rope_snake[ind].move_head(Direction::letter_to_direction(&dr));
+                } else {
+                    let other_x = rope_snake[ind - 1].x;
+                    let other_y = rope_snake[ind - 1].y;
+                    rope_snake[ind].move_tail(other_x, other_y);
+                }
+            }
+        }
+    }
+
+    println!("Part 2: {}", rope_snake[rope_snake.len() - 1].get_visited().len());
 
     ExitCode::SUCCESS
 }
