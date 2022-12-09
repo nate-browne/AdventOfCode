@@ -106,6 +106,8 @@ class Tail(object):
     def reset_position(self) -> None:
         self.x = 0
         self.y = 0
+        self._visited.clear()
+        self._add_to_visited()
 
     def get_visited(self) -> Set[Tuple[int, int]]:
         return self._visited
