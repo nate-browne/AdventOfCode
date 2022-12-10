@@ -68,7 +68,7 @@ impl RopeNode {
             Direction::DOWN => self.y -= 1,
             Direction::LEFT => self.x -= 1,
             Direction::RIGHT => self.x += 1,
-        } 
+        }
     }
 
     fn move_tail(&mut self, other_x: i32, other_y: i32) {
@@ -108,9 +108,9 @@ fn parse_input_file(input_file: &String) -> Result<Vec<(String, i32)>> {
     let reader = BufReader::new(infile);
 
     for line in reader.lines() {
-        let ln = line?;
+        let ln = line.context("Error occurred unwrapping String")?;
         let line_items: Vec<&str> = ln.split(' ').collect();
-        res.push((line_items[0].to_string(), line_items[1].parse::<i32>()?));
+        res.push((line_items[0].to_string(), line_items[1].parse::<i32>().context("Error occurred parsing string as int")?));
     }
     Ok(res)
 }

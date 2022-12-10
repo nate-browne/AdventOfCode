@@ -33,7 +33,7 @@ fn build_tree_grid(input_file: &String) -> Result<Vec<Vec<i32>>> {
     let reader = BufReader::new(infile);
 
     for line in reader.lines() {
-        let ln = line?;
+        let ln = line.context("Error occurred unwrapping String")?;
         let mut tmp = Vec::new();
         for ch in ln.chars() {
             tmp.push(ch as i32 - '0' as i32);
