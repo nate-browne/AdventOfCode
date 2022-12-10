@@ -35,7 +35,7 @@ fn solver(input_file: &String, pointer2start: usize) -> Result<usize> {
 
     // This for loop only runs once since each file only has one line in it
     for line in reader.lines() {
-        let ln = line?;
+        let ln = line.context("Error occurred unwrapping string")?;
         while pointer2 < ln.len() {
             let pointed_chars = &ln[pointer1..pointer2];
             let charset: HashSet<char> = pointed_chars.chars().collect();

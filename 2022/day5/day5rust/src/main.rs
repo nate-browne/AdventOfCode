@@ -49,7 +49,7 @@ fn parse_state_line(state_input_line: String) -> (String, String) {
 
 fn parse_instruction_line(instruction: String) -> Result<(i32, String, String)> {
     let parsed_instruction: Vec<&str> = instruction.split(";").collect();
-    let number_of_crates = parsed_instruction[0].parse::<i32>()?;
+    let number_of_crates = parsed_instruction[0].parse::<i32>().context("Error occurred parsing string to int")?;
 
     let stack_info: Vec<&str> = parsed_instruction[1].split("->").collect();
     let starting_stack = stack_info[0].to_string();
@@ -65,7 +65,7 @@ fn fill_stacks_map(state_filename: &String) -> Result<BTreeMap<String, Vec<Strin
     );
 
     for line in reader.lines() {
-        let (crate_number, crates) = parse_state_line(line?);
+        let (crate_number, crates) = parse_state_line(line.context("Error occurred unwrapping string")?);
 
         if !stacks_map.contains_key(&crate_number) {
             stacks_map.insert(crate_number.clone(), Vec::new());
@@ -91,7 +91,7 @@ fn run_simulation(stacks_map: &mut BTreeMap<String, Vec<String>>, instructions_f
     );
 
     for line in reader.lines() {
-        let (number_of_crates, starting_stack, destination_stack) = parse_instruction_line(line.unwrap())?;
+        let (number_of_crates, starting_stack, destination_stack) = parse_instruction_line(line?)?;
 
         for _ in 0..number_of_crates {
             let mut st = match stacks_map.get_mut(&starting_stack) {

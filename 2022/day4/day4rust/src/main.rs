@@ -33,15 +33,15 @@ fn parse_input_file(filename: &String) -> Result<Vec<(i32, i32, i32, i32)>> {
     // Have to use `ReaderBuilder` since the regular `Reader` assumes line 1 is a header
     let mut rdr = csv::ReaderBuilder::new()
         .has_headers(false)
-        .from_reader(BufReader::new(File::open(filename)?));
+        .from_reader(BufReader::new(File::open(filename).context("Error occurred opening File")?));
 
     // For every row, take each string, split it on the '-' character, and parse each
     // half of that as an i32. Then, push those i32s into a vector
     for row in rdr.records() {
         let mut extension = Vec::new();
-        for item in row?.into_iter() {
+        for item in row.context("Error occurred unwrapping string")?.into_iter() {
             for tm in item.split("-").into_iter() {
-                extension.push(tm.parse::<i32>()?);
+                extension.push(tm.parse::<i32>().context("Error occurred parsing string to int")?);
             }
         }
 
