@@ -45,7 +45,7 @@ def part2(instructions: List[Tuple[str, str]]):
     output = []
     for instr, arg in instructions:
         num_ticks = command_map[instr]
-        for _ in range(num_ticks):
+        for val in range(num_ticks):
             pixel_to_draw = tick % 40
             if (x_register - 1) <= pixel_to_draw <= (x_register + 1):
                 output.append("#")
@@ -55,12 +55,14 @@ def part2(instructions: List[Tuple[str, str]]):
                 print(''.join(output))
                 output.clear()
             tick += 1
-
+            if instr == 'addx' and val == num_ticks - 1:
+                x_register += int(arg)
 
 
 def main(input_file: str):
     instructions = process_file(input_file)
     print(f'Part 1: {part1(instructions)}')
+    part2(instructions)
 
 
 if __name__ == "__main__":

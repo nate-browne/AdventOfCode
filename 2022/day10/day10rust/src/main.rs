@@ -36,7 +36,7 @@ fn process_file(input_file: &String) -> Result<Vec<(String, String)>> {
     let reader = BufReader::new(infile);
 
     for line in reader.lines() {
-        let mut ln = line?;
+        let mut ln = line.context("Error occurred unwrapping string")?;
         if ln.as_str() == "noop" {
             ln += " 0";
         }
@@ -61,11 +61,42 @@ fn part1(instructions: &Vec<(String, String)>, command_map: &HashMap<String, i32
                 signal_strength += x_register * tick;
             }
             if instr.as_str() == "addx" && val == num_ticks - 1 {
-                x_register += arg.parse::<i32>()?;
+                x_register += arg.parse::<i32>().context("Error occurred parsing string to int")?;
             }
         }
     }
     Ok(signal_strength)
+}
+
+fn part2(instructions: &Vec<(String, String)>, command_map: &HashMap<String, i32>) -> Result<()> {
+    let mut tick: i32 = 0;
+    let mut x_register: i32 = 1;
+    let mut output = vec![];
+
+    for (instr, arg) in instructions {
+        let num_ticks = command_map[instr];
+        for val in 0..num_ticks {
+            let pixel_to_draw = tick % 40;
+
+            if (x_register - 1) <= pixel_to_draw && pixel_to_draw <= (x_register + 1) {
+                output.push("#");
+            } else {
+                output.push(".");
+            }
+
+            if output.len() >= 40 {
+                let res = output.join("");
+                println!("{res}");
+                output.clear();
+            }
+            tick += 1;
+
+            if instr.as_str() == "addx" && val == num_ticks - 1 {
+                x_register += arg.parse::<i32>().context("Error occurred parsing string to int")?;
+            }
+        }
+    }
+    Ok(())
 }
 
 fn main() -> ExitCode {
@@ -103,6 +134,10 @@ fn main() -> ExitCode {
     };
 
     println!("Part 1 answer: {part1_answer}");
+    if let Err(e) = part2(&instructions, &command_map) {
+        eprintln!("Error occured solving part 2: {e}");
+        return ExitCode::FAILURE;
+    }
 
     ExitCode::SUCCESS
 }
