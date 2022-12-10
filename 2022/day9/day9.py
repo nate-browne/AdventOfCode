@@ -87,19 +87,10 @@ def parse_input_file(input_file: str) -> List[Tuple[str, int]]:
     return result
 
 
-def main(input_file: str):
-    instructions = parse_input_file(input_file)
-    head = Head()
-    tail = Tail()
-    for dr, amt in instructions:
-        for _ in range(amt):
-            head.move(Direction.letter_to_direction(dr))
-            tail.move(head)
-    print(f'Part 1: {len(tail.get_visited())}')
-
+def run_simulation(instructions: List[Tuple[str, int]], num_nodes: int) -> int:
     rope_snake: List[Union[Head, Tail]] = []
     rope_snake.append(Head())
-    for _ in range(9):
+    for _ in range(num_nodes - 1):
         rope_snake.append(Tail())
 
     for dr, amt in instructions:
@@ -109,8 +100,14 @@ def main(input_file: str):
                     item.move(Direction.letter_to_direction(dr))
                 elif isinstance(item, Tail):
                     item.move(rope_snake[ind - 1])
+    return len(rope_snake[-1].get_visited())
 
-    print(f'Part 2: {len(rope_snake[-1].get_visited())}')
+
+def main(input_file: str):
+    instructions = parse_input_file(input_file)
+
+    print(f'Part 1: {run_simulation(instructions, 2)}')
+    print(f'Part 2: {run_simulation(instructions, 10)}')
 
 
 if __name__ == "__main__":

@@ -115,6 +115,31 @@ fn parse_input_file(input_file: &String) -> Result<Vec<(String, i32)>> {
     Ok(res)
 }
 
+fn run_simulation(instructions: &Vec<(String, i32)>, num_nodes: i32) -> usize {
+    let mut rope_snake = Vec::new();
+    rope_snake.push(RopeNode::new());
+
+    for _ in 0..(num_nodes - 1) {
+        rope_snake.push(RopeNode::new());
+    }
+
+    for (dr, amt) in instructions {
+        for _ in 0..*amt {
+            for ind in 0..rope_snake.len() {
+                if ind == 0 {
+                    rope_snake[ind].move_head(Direction::letter_to_direction(dr));
+                } else {
+                    let other_x = rope_snake[ind - 1].x;
+                    let other_y = rope_snake[ind - 1].y;
+                    rope_snake[ind].move_tail(other_x, other_y);
+                }
+            }
+        }
+    }
+
+    rope_snake[rope_snake.len() - 1].get_visited().len()
+}
+
 fn main() -> ExitCode {
     println!();
 
@@ -128,8 +153,6 @@ fn main() -> ExitCode {
         }
     };
 
-    let mut head = RopeNode::new();
-    let mut tail = RopeNode::new();
     let instructions = match parse_input_file(&conf.input_file) {
         Ok(inst) => inst,
         Err(e) => {
@@ -138,36 +161,8 @@ fn main() -> ExitCode {
         }
     };
 
-    for (dr, amt) in &instructions {
-        for _ in 0..*amt {
-            head.move_head(Direction::letter_to_direction(dr));
-            tail.move_tail(head.x, head.y);
-        }
-    }
-    println!("Part 1: {}", tail.get_visited().len());
-
-    let mut rope_snake = Vec::new();
-    rope_snake.push(RopeNode::new());
-
-    for _ in 0..9 {
-        rope_snake.push(RopeNode::new());
-    }
-
-    for (dr, amt) in instructions {
-        for _ in 0..amt {
-            for ind in 0..rope_snake.len() {
-                if ind == 0 {
-                    rope_snake[ind].move_head(Direction::letter_to_direction(&dr));
-                } else {
-                    let other_x = rope_snake[ind - 1].x;
-                    let other_y = rope_snake[ind - 1].y;
-                    rope_snake[ind].move_tail(other_x, other_y);
-                }
-            }
-        }
-    }
-
-    println!("Part 2: {}", rope_snake[rope_snake.len() - 1].get_visited().len());
+    println!("Part 1: {}", run_simulation(&instructions, 2));
+    println!("Part 2: {}", run_simulation(&instructions, 10));
 
     ExitCode::SUCCESS
 }
