@@ -1,0 +1,38 @@
+{
+  "monkey 0": {
+    "starting_items": [79, 98],
+    "operation": "new = old * 19",
+    "test": {
+      "operation": "% 23",
+      "true": "monkey 2",
+      "false": "monkey 3"
+    }
+  },
+  "monkey 1": {
+    "starting_items": [54, 65, 75, 74],
+    "operation": "new = old + 6",
+    "test": {
+      "operation": "% 19",
+      "true": "monkey 2",
+      "false": "monkey 0"
+    }
+  },
+  "monkey 2": {
+    "starting_items": [79, 60, 97],
+    "operation": "new = old * old",
+    "test": {
+      "operation": "% 13",
+      "true": "monkey 1",
+      "false": "monkey 3"
+    }
+  },
+  "monkey 3": {
+    "starting_items": [74],
+    "operation": "new = old + 3",
+    "test": {
+      "operation": "% 17",
+      "true": "monkey 0",
+      "false": "monkey 1"
+    }
+  }
+}
