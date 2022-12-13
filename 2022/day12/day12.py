@@ -42,37 +42,20 @@ def BFS(grid: Grid, start: Point, end: Point) -> int:
         if current in seen:
             continue
 
-        if current == end:
-            return dist
-
         seen.add(current)
         current_height = grid[current.x][current.y]
 
+        if current == end:
+            return dist
+
         # check neighbors
-        up = Point(current.x - 1, current.y)
-        if point_in_bounds(up, grid) and up not in seen:
-            new_height = grid[up.x][up.y]
-            if letter_to_height(new_height) - letter_to_height(current_height) <= 1:
-                queue.append((up, dist + 1))
-
-        down = Point(current.x + 1, current.y)
-        if point_in_bounds(down, grid) and down not in seen:
-            new_height = grid[down.x][down.y]
-            if letter_to_height(new_height) - letter_to_height(current_height) <= 1:
-                queue.append((down, dist + 1))
-
-        left = Point(current.x, current.y - 1)
-        if point_in_bounds(left, grid) and left not in seen:
-            new_height = grid[left.x][left.y]
-            if letter_to_height(new_height) - letter_to_height(current_height) <= 1:
-                queue.append((left, dist + 1))
-
-        right = Point(current.x, current.y + 1)
-        if point_in_bounds(right, grid) and right not in seen:
-            new_height = grid[right.x][right.y]
-            if letter_to_height(new_height) - letter_to_height(current_height) <= 1:
-                queue.append((right, dist + 1))
-    return len(seen)
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            nxt = Point(dx + current.x, dy + current.y)
+            if point_in_bounds(nxt, grid):
+                new_height = grid[nxt.x][nxt.y]
+                if letter_to_height(new_height) - letter_to_height(current_height) <= 1:
+                    queue.append((nxt, dist + 1))
+    return 1_000_000_000  # no path exists
 
 
 def letter_to_height(ltr: str) -> int:
@@ -84,7 +67,6 @@ def letter_to_height(ltr: str) -> int:
 
 def main(input_file: str):
     grid, start, end = create_grid(input_file)
-    print(f'Start: {start}, End: {end}')
 
     print(f'Part 1: {BFS(grid, start, end)}')
 
@@ -92,7 +74,7 @@ def main(input_file: str):
     starting_points = [Point(x, y) for x in range(len(grid)) for y in range(len(grid[0])) if letter_to_height(grid[x][y]) == 0]
 
     # for each point, run BFS to get distance to end. Then, sort and pick the shortest
-    part2_distances = list(map(lambda x: BFS(grid, x, end), starting_points))
+    part2_distances = [BFS(grid, start_point, end) for start_point in starting_points]
     part2_distances.sort()
     part2 = part2_distances[0]
     print(f'Part 2: {part2}')
